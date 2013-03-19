@@ -25,6 +25,11 @@ defaults
 frontend http
   maxconn <%= node['haproxy']['frontend_max_connections'] %>
   bind <%= node['haproxy']['incoming_address'] %>:<%= node['haproxy']['incoming_port'] %>
+  <% if node['haproxy']['error_file'] -%>
+  <% ["503", "504"].each do |error| -%>
+  errorfile <%= error %> <%= node['haproxy']['conf_dir'] %>/errors/<%= node['haproxy']['error_file'] %>
+  <% end -%>
+  <% end -%>
   default_backend servers-http
 
 <% if node['haproxy']['enable_ssl'] -%>

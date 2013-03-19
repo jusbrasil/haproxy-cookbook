@@ -63,6 +63,24 @@ template "#{node['haproxy']['conf_dir']}/haproxy.cfg" do
   notifies :reload, "service[haproxy]"
 end
 
+directory "#{node['haproxy']['conf_dir']}/errors" do
+  owner "root"
+  group "root"
+  mode 0755
+  action :create
+  recursive true
+  not_if { ::File.exists?("#{node['haproxy']['conf_dir']}/errors") }
+end
+
+template "#{node['haproxy']['conf_dir']}/errors/#{node[:haproxy][:error_file]}" do
+  source "errors/#{node[:haproxy][:error_file]}.erb"
+  owner "root"
+  group "root"
+  mode 0644
+  only_if { node[:haproxy][:error_file] }
+  notifies :reload, "service[haproxy]"
+end
+
 service "haproxy" do
   supports :restart => true, :status => true, :reload => true
   action [:enable, :start]
