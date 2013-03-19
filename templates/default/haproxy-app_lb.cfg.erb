@@ -59,4 +59,10 @@ backend servers-https
 listen admin <%= node['haproxy']['admin']['address_bind'] %>:<%= node['haproxy']['admin']['port'] %>
   mode http
   stats uri /
+  stats refresh 30s
+  stats show-legends
+  <% if node["haproxy"]["admin"]["password"] %>
+  stats realm Haproxy\ Statistics
+  stats auth haproxy:<%= node["haproxy"]["admin"]["password"] %>
+  <% end %>
 <% end -%>
